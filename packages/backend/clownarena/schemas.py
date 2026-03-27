@@ -82,6 +82,7 @@ class ProblemCreateRequest(BaseModel):
     output_spec: str = ""
     constraints_text: str = ""
     difficulty: int = Field(default=1, ge=1, le=5)
+    is_template_seeded: bool = False
 
 
 class ProblemUpdateRequest(BaseModel):
@@ -183,6 +184,7 @@ class ProblemResponse(APIModel):
     status: ProblemStatus
     is_public: bool
     is_duel_enabled: bool
+    is_template_seeded: bool = False
     active_version_id: str | None = None
     validation_notes: str | None = None
     created_at: datetime
@@ -199,6 +201,7 @@ class ProblemSummaryResponse(APIModel):
     slug: str
     difficulty: int
     status: ProblemStatus
+    is_template_seeded: bool = False
     active_version_id: str | None = None
     validation_notes: str | None = None
     updated_at: datetime

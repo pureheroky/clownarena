@@ -44,6 +44,7 @@ async def create_problem(
     output_spec: str,
     constraints_text: str,
     difficulty: int,
+    is_template_seeded: bool = False,
 ) -> ProblemResponse:
     problem = Problem(
         author_id=author.id,
@@ -55,6 +56,7 @@ async def create_problem(
         constraints_text=constraints_text,
         difficulty=difficulty,
         status=ProblemStatus.DRAFT,
+        is_template_seeded=is_template_seeded,
     )
     session.add(problem)
     await session.commit()
@@ -420,6 +422,10 @@ async def publish_problem(
     is_duel_enabled: bool,
 ) -> ProblemResponse:
     problem = await _get_owned_problem(session, problem_id=problem_id, author_id=author_id)
+    if problem.is_template_seeded:
+        raise ConflictError(
+            "Built-in sample tasks are practice-only. Create your own version if you want to publish a duel problem."
+        )
     if problem.status != ProblemStatus.READY_FOR_DUEL:
         raise ConflictError("This task is not ready yet. Run the check and wait for it to pass before publishing.")
     if not is_public or not is_duel_enabled:
@@ -535,6 +541,7 @@ async def get_problem_response(
         status=problem.status,
         is_public=problem.is_public,
         is_duel_enabled=problem.is_duel_enabled,
+        is_template_seeded=problem.is_template_seeded,
         active_version_id=problem.active_version_id,
         validation_notes=problem.validation_notes,
         created_at=problem.created_at,
@@ -604,6 +611,7 @@ async def list_owned_problems(
                 slug=problem.slug,
                 difficulty=problem.difficulty,
                 status=problem.status,
+                is_template_seeded=problem.is_template_seeded,
                 active_version_id=problem.active_version_id,
                 validation_notes=problem.validation_notes,
                 updated_at=problem.updated_at,
@@ -626,6 +634,7 @@ async def list_duel_catalog(
             Problem.status == ProblemStatus.READY_FOR_DUEL,
             Problem.is_public.is_(True),
             Problem.is_duel_enabled.is_(True),
+            Problem.is_template_seeded.is_(False),
             Problem.active_version_id.is_not(None),
         )
         .order_by(desc(Problem.updated_at))

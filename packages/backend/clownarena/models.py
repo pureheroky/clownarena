@@ -55,6 +55,7 @@ class Problem(Base):
     status: Mapped[ProblemStatus] = mapped_column(Enum(ProblemStatus), default=ProblemStatus.DRAFT)
     is_public: Mapped[bool] = mapped_column(Boolean, default=False)
     is_duel_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_template_seeded: Mapped[bool] = mapped_column(Boolean, default=False)
     active_version_id: Mapped[str | None] = mapped_column(
         ForeignKey("problem_versions.id", ondelete="SET NULL"),
         nullable=True,

@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 22% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 14%;
+    --primary: 221 39% 18%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 214 31% 91%;
+    --secondary-foreground: 221 39% 18%;
+    --muted: 214 24% 94%;
+    --muted-foreground: 215 16% 35%;
+    --accent: 188 45% 46%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 214 18% 88%;
+    --input: 214 18% 88%;
+    --ring: 221 39% 18%;
+    --radius: 1rem;
+    --font-sans:
+      "SF Pro Text", "SF Pro Display", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color-scheme: light;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top, rgba(34, 56, 89, 0.06), transparent 28%),
+      linear-gradient(180deg, rgba(250, 251, 252, 0.98), rgba(244, 247, 250, 1));
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+.poster-grid {
+  background-image:
+    linear-gradient(rgba(34, 56, 89, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 56, 89, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px;
+}

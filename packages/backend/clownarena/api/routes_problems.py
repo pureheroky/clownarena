@@ -56,6 +56,7 @@ async def create_problem_route(
         output_spec=payload.output_spec,
         constraints_text=payload.constraints_text,
         difficulty=payload.difficulty,
+        is_template_seeded=payload.is_template_seeded,
     )
 
 
