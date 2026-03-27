@@ -1,0 +1,10 @@
+{
+  "name": "api",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m uvicorn apps.api.main:app --reload --port 8000",
+    "build": "python3 -m compileall ../../packages/backend/clownarena apps",
+    "test": "python3 -m unittest discover ../../packages/backend/clownarena/tests"
+  }
+}
+

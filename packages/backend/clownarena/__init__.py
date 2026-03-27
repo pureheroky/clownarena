@@ -1,0 +1,1 @@
+"""Clown Arena backend package."""

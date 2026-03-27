@@ -1,0 +1,9 @@
+{
+  "name": "judge",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m dramatiq clownarena.judge.tasks",
+    "test": "python3 -m unittest discover ../../packages/backend/clownarena/tests"
+  }
+}
+

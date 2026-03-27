@@ -1,0 +1,100 @@
+[
+  {
+    "title": "Longest Equal Run",
+    "description": "You are given a sequence of integers. Find the length of the longest contiguous block that contains only one repeated value.\n\nIf all numbers are different, the answer is 1.",
+    "input_spec": "The first line contains one integer n — the length of the sequence.\n\nThe second line contains n integers.",
+    "output_spec": "Print one integer — the length of the longest contiguous block of equal numbers.",
+    "constraints_text": "1 <= n <= 200000\nEach number fits in a signed 32-bit integer.",
+    "difficulty": 2,
+    "examples": [
+      {
+        "input_data": "8\n1 1 2 2 2 3 3 1\n",
+        "output_data": "3\n",
+        "explanation": "The longest block is 2 2 2."
+      },
+      {
+        "input_data": "5\n7 7 7 7 7\n",
+        "output_data": "5\n",
+        "explanation": "All values are the same, so the whole sequence is one run."
+      }
+    ],
+    "tests": [
+      {
+        "input_data": "6\n4 4 1 1 1 2\n",
+        "expected_output": "3\n",
+        "kind": "sample",
+        "weight": 1
+      },
+      {
+        "input_data": "7\n5 1 1 1 1 2 2\n",
+        "expected_output": "4\n",
+        "kind": "hidden",
+        "weight": 2
+      },
+      {
+        "input_data": "4\n9 8 7 6\n",
+        "expected_output": "1\n",
+        "kind": "hidden",
+        "weight": 2
+      },
+      {
+        "input_data": "1\n42\n",
+        "expected_output": "1\n",
+        "kind": "edge",
+        "weight": 1
+      }
+    ],
+    "reference_solution": {
+      "code": "import sys\n\n\ndef solve(data: str) -> str:\n    parts = data.strip().split()\n    if not parts:\n        return \"0\"\n\n    n = int(parts[0])\n    numbers = list(map(int, parts[1:1 + n]))\n\n    if not numbers:\n        return \"0\"\n\n    best = 1\n    current = 1\n\n    for index in range(1, len(numbers)):\n        if numbers[index] == numbers[index - 1]:\n            current += 1\n        else:\n            current = 1\n        if current > best:\n            best = current\n\n    return str(best)\n\n\nif __name__ == \"__main__\":\n    print(solve(sys.stdin.read()))"
+    }
+  },
+  {
+    "title": "Smallest Missing Non-Negative",
+    "description": "You are given an array of integers. Find the smallest non-negative integer that does not appear in the array.\n\nFor example, if the array contains 0, 1 and 3, the answer is 2.",
+    "input_spec": "The first line contains one integer n.\n\nThe second line contains n integers.",
+    "output_spec": "Print the smallest non-negative integer that is missing from the array.",
+    "constraints_text": "1 <= n <= 200000\nValues can be negative or positive.",
+    "difficulty": 3,
+    "examples": [
+      {
+        "input_data": "5\n0 1 2 4 5\n",
+        "output_data": "3\n",
+        "explanation": "The smallest missing non-negative value is 3."
+      },
+      {
+        "input_data": "4\n1 2 3 4\n",
+        "output_data": "0\n",
+        "explanation": "Zero does not appear in the array."
+      }
+    ],
+    "tests": [
+      {
+        "input_data": "6\n0 2 1 4 2 0\n",
+        "expected_output": "3\n",
+        "kind": "sample",
+        "weight": 1
+      },
+      {
+        "input_data": "5\n-5 -1 -3 -2 -4\n",
+        "expected_output": "0\n",
+        "kind": "hidden",
+        "weight": 2
+      },
+      {
+        "input_data": "7\n0 1 2 3 4 5 6\n",
+        "expected_output": "7\n",
+        "kind": "hidden",
+        "weight": 2
+      },
+      {
+        "input_data": "8\n2 2 2 0 1 1 3 5\n",
+        "expected_output": "4\n",
+        "kind": "edge",
+        "weight": 1
+      }
+    ],
+    "reference_solution": {
+      "code": "import sys\n\n\ndef solve(data: str) -> str:\n    parts = data.strip().split()\n    if not parts:\n        return \"0\"\n\n    n = int(parts[0])\n    numbers = list(map(int, parts[1:1 + n]))\n    seen = {number for number in numbers if number >= 0}\n\n    answer = 0\n    while answer in seen:\n        answer += 1\n\n    return str(answer)\n\n\nif __name__ == \"__main__\":\n    print(solve(sys.stdin.read()))"
+    }
+  }
+]
