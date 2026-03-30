@@ -10,7 +10,7 @@ from __future__ import annotations
 from alembic import op
 
 from clownarena.database import Base
-from clownarena import models  # noqa: F401
+from clownarena import models
 
 
 revision = "20260325_0001"

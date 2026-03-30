@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config, pool
 
 from clownarena.config import get_settings
 from clownarena.database import Base
-from clownarena import models  # noqa: F401
+from clownarena import models
 
 
 config = context.config

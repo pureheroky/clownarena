@@ -7,6 +7,8 @@ COPY packages/backend /workspace/packages/backend
 COPY apps /workspace/apps
 COPY alembic /workspace/alembic
 COPY alembic.ini /workspace/alembic.ini
+COPY scripts /workspace/scripts
+COPY docs /workspace/docs
 
 RUN pip install --no-cache-dir .
 

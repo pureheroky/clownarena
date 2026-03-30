@@ -67,6 +67,28 @@ PLAYWRIGHT_API_URL=http://127.0.0.1:8000 \
 pnpm test:e2e
 ```
 
+## Seed service-account problems
+
+If you want a small built-in catalog owned by the system instead of a human user, run the seeder:
+
+```bash
+python scripts/seed_service_problems.py
+```
+
+Default behavior:
+
+- creates or reuses the service account `system <system@clownarena.local>`
+- loads problem payloads from `docs/sample-problems.json`
+- creates only missing tasks for that account
+- marks them as published duel-ready tasks
+
+Useful options:
+
+- `python scripts/seed_service_problems.py --draft-only`
+- `python scripts/seed_service_problems.py --file /path/to/problems.json`
+- `python scripts/seed_service_problems.py --username arena-bot --email arena-bot@example.com`
+- `python scripts/seed_service_problems.py --template-seeded`
+
 ## MVP defaults
 
 - Signup bonus: `200` clown tokens
