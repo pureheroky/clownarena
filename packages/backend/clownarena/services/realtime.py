@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import inspect
+import secrets
 from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Any
@@ -22,6 +23,7 @@ class DuelEventBus:
     def __init__(self) -> None:
         settings = get_settings()
         self._settings = settings
+        self._instance_id = secrets.token_hex(8)
         self._connections: dict[str, list[WebSocket]] = defaultdict(list)
         self._redis: Redis | None = None
         self._listener_task: asyncio.Task | None = None
@@ -64,7 +66,9 @@ class DuelEventBus:
             duel_id=duel_id,
             payload=payload,
             created_at=utcnow(),
+            source_id=self._instance_id,
         )
+        await self._broadcast_local(duel_id, message)
         if self._redis is None:
             with contextlib.suppress(Exception):
                 self._redis = Redis.from_url(self._settings.redis_url, decode_responses=True)
@@ -85,6 +89,8 @@ class DuelEventBus:
             if not isinstance(data, str):
                 continue
             payload = WebSocketEvent.model_validate_json(data)
+            if payload.source_id == self._instance_id:
+                continue
             await self._broadcast_local(payload.duel_id, payload)
 
     async def _broadcast_local(self, duel_id: str, message: WebSocketEvent) -> None:

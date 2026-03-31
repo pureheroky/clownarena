@@ -1,6 +1,7 @@
 # Sample Problems For Clown Arena
 
 Ниже два простых задания для быстрого наполнения MVP. У каждого есть:
+
 - title
 - description
 - input/output spec
@@ -14,38 +15,47 @@
 ## Problem 1: Longest Equal Run
 
 ### Title
+
 `Longest Equal Run`
 
 ### Difficulty
+
 `2`
 
 ### Description
+
 You are given a sequence of integers. Find the length of the longest contiguous block that contains only one repeated value.
 
 If all numbers are different, the answer is `1`.
 
 ### Input spec
+
 The first line contains one integer `n` — the length of the sequence.
 
 The second line contains `n` integers.
 
 ### Output spec
+
 Print one integer — the length of the longest contiguous block of equal numbers.
 
 ### Constraints
+
 - `1 <= n <= 200000`
 - Each number fits in a signed 32-bit integer.
 
 ### Examples
 
 #### Example 1
+
 Input:
+
 ```text
 8
 1 1 2 2 2 3 3 1
 ```
 
 Output:
+
 ```text
 3
 ```
@@ -54,13 +64,16 @@ Explanation:
 The longest block is `2 2 2`.
 
 #### Example 2
+
 Input:
+
 ```text
 5
 7 7 7 7 7
 ```
 
 Output:
+
 ```text
 5
 ```
@@ -68,54 +81,67 @@ Output:
 ### Tests
 
 #### Sample test
+
 Input:
+
 ```text
 6
 4 4 1 1 1 2
 ```
 
 Expected output:
+
 ```text
 3
 ```
 
 #### Hidden test
+
 Input:
+
 ```text
 7
 5 1 1 1 1 2 2
 ```
 
 Expected output:
+
 ```text
 4
 ```
 
 #### Hidden test
+
 Input:
+
 ```text
 4
 9 8 7 6
 ```
 
 Expected output:
+
 ```text
 1
 ```
 
 #### Edge test
+
 Input:
+
 ```text
 1
 42
 ```
 
 Expected output:
+
 ```text
 1
 ```
 
 ### Reference solution
+
 ```python
 import sys
 
@@ -154,50 +180,62 @@ if __name__ == "__main__":
 ## Problem 2: Smallest Missing Non-Negative
 
 ### Title
+
 `Smallest Missing Non-Negative`
 
 ### Difficulty
+
 `3`
 
 ### Description
+
 You are given an array of integers. Find the smallest non-negative integer that does not appear in the array.
 
 For example, if the array contains `0`, `1` and `3`, the answer is `2`.
 
 ### Input spec
+
 The first line contains one integer `n`.
 
 The second line contains `n` integers.
 
 ### Output spec
+
 Print the smallest non-negative integer that is missing from the array.
 
 ### Constraints
+
 - `1 <= n <= 200000`
 - Values can be negative or positive.
 
 ### Examples
 
 #### Example 1
+
 Input:
+
 ```text
 5
 0 1 2 4 5
 ```
 
 Output:
+
 ```text
 3
 ```
 
 #### Example 2
+
 Input:
+
 ```text
 4
 1 2 3 4
 ```
 
 Output:
+
 ```text
 0
 ```
@@ -205,54 +243,67 @@ Output:
 ### Tests
 
 #### Sample test
+
 Input:
+
 ```text
 6
 0 2 1 4 2 0
 ```
 
 Expected output:
+
 ```text
 3
 ```
 
 #### Hidden test
+
 Input:
+
 ```text
 5
 -5 -1 -3 -2 -4
 ```
 
 Expected output:
+
 ```text
 0
 ```
 
 #### Hidden test
+
 Input:
+
 ```text
 7
 0 1 2 3 4 5 6
 ```
 
 Expected output:
+
 ```text
 7
 ```
 
 #### Edge test
+
 Input:
+
 ```text
 8
 2 2 2 0 1 1 3 5
 ```
 
 Expected output:
+
 ```text
 4
 ```
 
 ### Reference solution
+
 ```python
 import sys
 
@@ -276,3 +327,4 @@ def solve(data: str) -> str:
 if __name__ == "__main__":
     print(solve(sys.stdin.read()))
 ```
+

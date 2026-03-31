@@ -385,3 +385,4 @@ class WebSocketEvent(BaseModel):
     duel_id: str
     payload: dict[str, Any]
     created_at: datetime
+    source_id: str | None = None
