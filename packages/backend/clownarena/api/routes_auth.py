@@ -11,6 +11,7 @@ from clownarena.schemas import (
     RegisterRequest,
     SessionResponse,
     UserResponse,
+    WebSocketTokenResponse,
 )
 from clownarena.security import clear_session_cookie, create_access_token, set_session_cookie
 from clownarena.services import auth as auth_service
@@ -57,3 +58,9 @@ async def logout(response: Response) -> LogoutResponse:
 @router.get("/me", response_model=UserResponse)
 async def me(user=Depends(get_current_user)) -> UserResponse:
     return UserResponse.model_validate(user)
+
+
+@router.get("/ws-token", response_model=WebSocketTokenResponse)
+async def websocket_token(user=Depends(get_current_user)) -> WebSocketTokenResponse:
+    token = create_access_token(user.id)
+    return WebSocketTokenResponse(token=token)

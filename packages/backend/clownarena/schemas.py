@@ -49,6 +49,10 @@ class SessionResponse(BaseModel):
     user: UserResponse
 
 
+class WebSocketTokenResponse(BaseModel):
+    token: str
+
+
 class LogoutResponse(BaseModel):
     ok: bool = True
 

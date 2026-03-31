@@ -59,35 +59,61 @@ export default function ActiveDuelPage() {
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
     let isActive = true;
     let reconnectAttempt = 0;
+    let isConnecting = false;
 
-    const connect = () => {
-      socket = new WebSocket(buildWebSocketUrl(`/ws/duels/${params.id}`));
-
-      socket.onopen = () => {
-        reconnectAttempt = 0;
-      };
-
-      socket.onmessage = (event) => {
-        const payload = JSON.parse(event.data) as LiveEvent;
-        setEvents((current) => [payload, ...current].slice(0, 20));
-        void queryClient.invalidateQueries({ queryKey: ["duel", params.id] });
-      };
-
-      socket.onerror = () => {
-        socket?.close();
-      };
-
-      socket.onclose = (event) => {
-        if (!isActive || event.code === 4401 || event.code === 4403) {
-          return;
-        }
-        const delay = Math.min(1000 * 2 ** reconnectAttempt, 10_000);
-        reconnectAttempt += 1;
-        reconnectTimer = setTimeout(connect, delay);
-      };
+    const scheduleReconnect = () => {
+      if (!isActive) {
+        return;
+      }
+      const delay = Math.min(1000 * 2 ** reconnectAttempt, 10_000);
+      reconnectAttempt += 1;
+      reconnectTimer = setTimeout(() => {
+        void connect();
+      }, delay);
     };
 
-    connect();
+    const connect = async () => {
+      if (isConnecting || !isActive) {
+        return;
+      }
+      isConnecting = true;
+      try {
+        const { token } = await api.wsToken();
+        if (!isActive) {
+          return;
+        }
+        const socketUrl = new URL(buildWebSocketUrl(`/ws/duels/${params.id}`));
+        socketUrl.searchParams.set("token", token);
+        socket = new WebSocket(socketUrl.toString());
+
+        socket.onopen = () => {
+          reconnectAttempt = 0;
+        };
+
+        socket.onmessage = (event) => {
+          const payload = JSON.parse(event.data) as LiveEvent;
+          setEvents((current) => [payload, ...current].slice(0, 20));
+          void queryClient.invalidateQueries({ queryKey: ["duel", params.id] });
+        };
+
+        socket.onerror = () => {
+          socket?.close();
+        };
+
+        socket.onclose = (event) => {
+          if (!isActive || event.code === 4401 || event.code === 4403) {
+            return;
+          }
+          scheduleReconnect();
+        };
+      } catch {
+        scheduleReconnect();
+      } finally {
+        isConnecting = false;
+      }
+    };
+
+    void connect();
 
     return () => {
       isActive = false;

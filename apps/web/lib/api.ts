@@ -35,6 +35,10 @@ export type ApiUser = {
   created_at: string;
 };
 
+export type WebSocketToken = {
+  token: string;
+};
+
 export type WalletTransaction = {
   id: string;
   amount: number;
@@ -282,6 +286,7 @@ export const api = {
     }),
   logout: () => request<{ ok: boolean }>("/auth/logout", { method: "POST" }),
   me: () => request<ApiUser>("/auth/me"),
+  wsToken: () => request<WebSocketToken>("/auth/ws-token"),
   profile: (username: string) => request<ApiUser>(`/profile/${username}`),
   wallet: () => request<Wallet>("/wallet"),
   claimDaily: () =>
