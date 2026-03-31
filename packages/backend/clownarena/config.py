@@ -76,6 +76,7 @@ class Settings:
     db_max_overflow: int = _env_int("DB_MAX_OVERFLOW", 10)
     db_pool_timeout: int = _env_int("DB_POOL_TIMEOUT", 30)
     db_pool_recycle: int = _env_int("DB_POOL_RECYCLE", 1800)
+    db_disable_pooling: bool = _env_bool("DB_DISABLE_POOLING", False)
 
 
 @lru_cache(maxsize=1)
