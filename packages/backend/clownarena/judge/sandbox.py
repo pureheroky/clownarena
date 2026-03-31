@@ -47,6 +47,10 @@ class DockerSandbox:
         self.settings = get_settings()
         self.container_name = f"clownarena-judge-{uuid.uuid4().hex[:12]}"
 
+    @property
+    def infra_timeout_sec(self) -> int:
+        return max(self.settings.judge_infra_timeout_sec, self.settings.judge_time_limit_sec)
+
     async def _run_cmd(
         self,
         args: list[str],
@@ -116,7 +120,7 @@ class DockerSandbox:
                     "py_compile",
                     "/tmp/solution.py",
                 ],
-                timeout=self.settings.judge_time_limit_sec,
+                timeout=self.infra_timeout_sec,
             )
         finally:
             await self._cleanup_container(container)
@@ -170,7 +174,7 @@ class DockerSandbox:
                 "sleep",
                 "infinity",
             ],
-            timeout=self.settings.judge_time_limit_sec,
+            timeout=self.infra_timeout_sec,
         )
         if create_result.status != SubmissionStatus.ACCEPTED:
             raise RuntimeError(create_result.stderr or "Failed to create sandbox container.")
@@ -181,7 +185,7 @@ class DockerSandbox:
                 "start",
                 container,
             ],
-            timeout=self.settings.judge_time_limit_sec,
+            timeout=self.infra_timeout_sec,
         )
         if start_result.status != SubmissionStatus.ACCEPTED:
             raise RuntimeError(start_result.stderr or "Failed to start sandbox container.")
@@ -197,7 +201,7 @@ class DockerSandbox:
                 "cat > /tmp/solution.py",
             ],
             stdin_text=code,
-            timeout=self.settings.judge_time_limit_sec,
+            timeout=self.infra_timeout_sec,
         )
         if write_result.status != SubmissionStatus.ACCEPTED:
             raise RuntimeError(write_result.stderr or "Failed to write source into sandbox container.")
@@ -211,7 +215,7 @@ class DockerSandbox:
                 "-f",
                 container,
             ],
-            timeout=self.settings.judge_time_limit_sec,
+            timeout=self.infra_timeout_sec,
         )
 
     async def evaluate(self, code: str, tests: list[dict]) -> tuple[SandboxResult, list[TestExecutionResult], int, int]:

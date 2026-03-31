@@ -61,6 +61,7 @@ class Settings:
     judge_python_image: str = os.getenv("JUDGE_PYTHON_IMAGE", "python:3.13-slim")
     judge_memory_mb: int = _env_int("JUDGE_MEMORY_MB", 128)
     judge_time_limit_sec: int = _env_int("JUDGE_TIME_LIMIT_SEC", 2)
+    judge_infra_timeout_sec: int = _env_int("JUDGE_INFRA_TIMEOUT_SEC", 15)
     judge_queue_name: str = os.getenv("JUDGE_QUEUE_NAME", "judge")
     ws_channel_prefix: str = os.getenv("WS_CHANNEL_PREFIX", "duel")
     cors_origins: tuple[str, ...] = _env_csv(
