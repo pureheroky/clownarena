@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import os
 from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from redis.asyncio import Redis
+from sqlalchemy import text
 
 from clownarena.api.routes_auth import router as auth_router
 from clownarena.api.routes_duels import router as duel_router
@@ -14,6 +17,7 @@ from clownarena.api.routes_problems import router as problem_router
 from clownarena.api.routes_wallet import router as wallet_router
 from clownarena.api.websocket import router as websocket_router
 from clownarena.config import get_settings
+from clownarena.database import SessionLocal
 from clownarena.services.errors import DomainError
 from clownarena.services.judge import JudgeGateway
 from clownarena.services.realtime import DuelEventBus
@@ -37,6 +41,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(settings.cors_origins),
+        allow_origin_regex=settings.cors_origin_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -49,6 +54,19 @@ def create_app() -> FastAPI:
     @app.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    @app.get("/health/ready")
+    async def health_ready() -> dict[str, str]:
+        async with SessionLocal() as session:
+            await session.execute(text("select 1"))
+
+        redis = Redis.from_url(settings.redis_url, decode_responses=True)
+        try:
+            await redis.ping()
+        finally:
+            await redis.aclose()
+
+        return {"status": "ready"}
 
     app.include_router(auth_router)
     app.include_router(profile_router)
@@ -63,4 +81,10 @@ app = create_app()
 
 
 def run() -> None:
-    uvicorn.run("clownarena.api.main:app", host="0.0.0.0", port=8000, reload=True)
+    settings = get_settings()
+    uvicorn.run(
+        "clownarena.api.main:app",
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8000")),
+        reload=settings.environment == "development",
+    )

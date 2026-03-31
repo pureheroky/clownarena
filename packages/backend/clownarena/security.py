@@ -14,6 +14,13 @@ from clownarena.config import get_settings
 from clownarena.database import utcnow
 
 
+def _cookie_samesite(value: str) -> str:
+    normalized = value.strip().lower()
+    if normalized not in {"lax", "strict", "none"}:
+        raise ValueError("SESSION_COOKIE_SAMESITE must be one of: lax, strict, none.")
+    return normalized
+
+
 def _b64url_encode(raw: bytes) -> str:
     return base64.urlsafe_b64encode(raw).rstrip(b"=").decode("ascii")
 
@@ -69,7 +76,8 @@ def set_session_cookie(response: Response, token: str) -> None:
         max_age=settings.access_token_exp_minutes * 60,
         httponly=True,
         secure=settings.session_cookie_secure,
-        samesite="lax",
+        samesite=_cookie_samesite(settings.session_cookie_samesite),
+        domain=settings.session_cookie_domain,
         path="/",
     )
 
@@ -80,7 +88,8 @@ def clear_session_cookie(response: Response) -> None:
         key=settings.session_cookie_name,
         httponly=True,
         secure=settings.session_cookie_secure,
-        samesite="lax",
+        samesite=_cookie_samesite(settings.session_cookie_samesite),
+        domain=settings.session_cookie_domain,
         path="/",
     )
 

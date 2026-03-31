@@ -19,6 +19,14 @@ def _env_bool(name: str, default: bool) -> bool:
     return value.lower() in {"1", "true", "yes", "on"}
 
 
+def _env_optional_str(name: str) -> str | None:
+    value = os.getenv(name)
+    if value is None:
+        return None
+    stripped = value.strip()
+    return stripped or None
+
+
 def _env_csv(name: str, default: str) -> tuple[str, ...]:
     raw = os.getenv(name, default)
     return tuple(item.strip() for item in raw.split(",") if item.strip())
@@ -59,8 +67,15 @@ class Settings:
         "CORS_ORIGINS",
         "http://localhost:3000,http://127.0.0.1:3000",
     )
+    cors_origin_regex: str | None = _env_optional_str("CORS_ORIGIN_REGEX")
     session_cookie_name: str = os.getenv("SESSION_COOKIE_NAME", "clownarena_session")
     session_cookie_secure: bool = _env_bool("SESSION_COOKIE_SECURE", False)
+    session_cookie_domain: str | None = _env_optional_str("SESSION_COOKIE_DOMAIN")
+    session_cookie_samesite: str = os.getenv("SESSION_COOKIE_SAMESITE", "lax").strip().lower()
+    db_pool_size: int = _env_int("DB_POOL_SIZE", 5)
+    db_max_overflow: int = _env_int("DB_MAX_OVERFLOW", 10)
+    db_pool_timeout: int = _env_int("DB_POOL_TIMEOUT", 30)
+    db_pool_recycle: int = _env_int("DB_POOL_RECYCLE", 1800)
 
 
 @lru_cache(maxsize=1)

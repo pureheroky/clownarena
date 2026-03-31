@@ -49,6 +49,10 @@ Stop and remove volumes:
 docker compose down -v
 ```
 
+## Production
+
+For a production target on Vercel + Google Cloud, see `docs/deployment-vercel-gcp.md`.
+
 ## End-to-end smoke checks
 
 The repository includes Playwright smoke coverage for auth, publish flow, practice rooms and rated rooms.

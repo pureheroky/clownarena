@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { API_URL, api } from "@/lib/api";
+import { api, buildWebSocketUrl } from "@/lib/api";
 import { duelRoomTypeLabel, duelStatusLabel, formatDateTime } from "@/lib/formatters";
 import { useSession } from "@/lib/use-session";
 
@@ -55,13 +55,47 @@ export default function ActiveDuelPage() {
 
   useEffect(() => {
     if (!isAuthenticated || !params.id) return;
-    const socket = new WebSocket(`${API_URL.replace("http", "ws")}/ws/duels/${params.id}`);
-    socket.onmessage = (event) => {
-      const payload = JSON.parse(event.data) as LiveEvent;
-      setEvents((current) => [payload, ...current].slice(0, 20));
-      void queryClient.invalidateQueries({ queryKey: ["duel", params.id] });
+    let socket: WebSocket | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let isActive = true;
+    let reconnectAttempt = 0;
+
+    const connect = () => {
+      socket = new WebSocket(buildWebSocketUrl(`/ws/duels/${params.id}`));
+
+      socket.onopen = () => {
+        reconnectAttempt = 0;
+      };
+
+      socket.onmessage = (event) => {
+        const payload = JSON.parse(event.data) as LiveEvent;
+        setEvents((current) => [payload, ...current].slice(0, 20));
+        void queryClient.invalidateQueries({ queryKey: ["duel", params.id] });
+      };
+
+      socket.onerror = () => {
+        socket?.close();
+      };
+
+      socket.onclose = (event) => {
+        if (!isActive || event.code === 4401 || event.code === 4403) {
+          return;
+        }
+        const delay = Math.min(1000 * 2 ** reconnectAttempt, 10_000);
+        reconnectAttempt += 1;
+        reconnectTimer = setTimeout(connect, delay);
+      };
     };
-    return () => socket.close();
+
+    connect();
+
+    return () => {
+      isActive = false;
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+      }
+      socket?.close();
+    };
   }, [isAuthenticated, params.id, queryClient]);
 
   const readyMutation = useMutation({

@@ -182,21 +182,23 @@ async def _duel_response(session: AsyncSession, duel: Duel) -> DuelResponse:
             ],
         ),
         participants=[
-            DuelParticipantResponse(
-                id=item.id,
-                user_id=item.user_id,
-                username=users[item.user_id].username if users.get(item.user_id) else "Unknown player",
-                seat=item.seat,
-                joined_at=item.joined_at,
-                ready_at=item.ready_at,
-                final_status=item.final_status,
-                penalty_seconds=item.penalty_seconds,
-                accepted_at=item.accepted_at,
-                best_passed_weight=item.best_passed_weight,
-                best_submission_at=item.best_submission_at,
-                disconnect_deadline_at=item.disconnect_deadline_at,
-                opponent_progress=item.opponent_progress,
-            )
+            (
+                lambda user: DuelParticipantResponse(
+                    id=item.id,
+                    user_id=item.user_id,
+                    username=user.username if user is not None else "Unknown player",
+                    seat=item.seat,
+                    joined_at=item.joined_at,
+                    ready_at=item.ready_at,
+                    final_status=item.final_status,
+                    penalty_seconds=item.penalty_seconds,
+                    accepted_at=item.accepted_at,
+                    best_passed_weight=item.best_passed_weight,
+                    best_submission_at=item.best_submission_at,
+                    disconnect_deadline_at=item.disconnect_deadline_at,
+                    opponent_progress=item.opponent_progress,
+                )
+            )(users.get(item.user_id))
             for item in participants
         ],
         stakes=[DuelStakeResponse.model_validate(item) for item in stakes],

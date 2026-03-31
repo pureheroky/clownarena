@@ -278,7 +278,7 @@ async def delete_problem_example(
     if example is None:
         raise NotFoundError("Example not found.")
     problem.validation_notes = None
-    session.delete(example)
+    await session.delete(example)
     await _mark_reference_stale(
         session,
         problem_id=problem.id,
@@ -306,7 +306,7 @@ async def delete_problem_test(
     if test is None:
         raise NotFoundError("Test case not found.")
     problem.validation_notes = None
-    session.delete(test)
+    await session.delete(test)
     await _mark_reference_stale(
         session,
         problem_id=problem.id,

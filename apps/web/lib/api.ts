@@ -1,4 +1,20 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+export const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? toWebSocketOrigin(API_URL);
+
+function toWebSocketOrigin(value: string) {
+  const url = new URL(value);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  url.pathname = "";
+  url.search = "";
+  url.hash = "";
+  return url.toString().replace(/\/$/, "");
+}
+
+export function buildWebSocketUrl(path: string) {
+  const normalizedBase = WS_URL.endsWith("/") ? WS_URL : `${WS_URL}/`;
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return new URL(normalizedPath, normalizedBase).toString();
+}
 
 export class ApiError extends Error {
   status: number;
